@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="20dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:background="#ffffff"
+    android:onClick="comingSoon"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.15">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/activityModeImage"
+            android:background="@drawable/cycling_red" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/activityModeText"
+            android:textColor="#8e8e93"
+            android:fontFamily="sans-serif-light"
+            android:text="Cycling"
+            android:textSize="10.2dp"
+            android:layout_below="@+id/activityModeImage"
+            android:layout_alignLeft="@+id/activityModeImage" />
+</RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.35">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/date"
+            android:textColor="#8e8e93"
+            android:textSize="13.6dp"
+            android:fontFamily="sans-serif"
+            android:text="3 Dec'2015"
+            android:paddingBottom="3dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/time"
+            android:textColor="#8e8e93"
+            android:fontFamily="sans-serif-light"
+            android:text="4:00Am-6:00AM"
+            android:layout_below="@+id/date"
+            android:textSize="10.2dp"
+            android:layout_alignLeft="@+id/date" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.25">
+        <TextView
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/totalDistance"
+            android:textColor="#ff2851"
+            android:fontFamily="sans-serif"
+            android:text="46.66 kms"
+            android:textSize="12.24dp"
+            android:paddingBottom="3dp"
+             />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/totalTime"
+            android:textColor="#8e8e93"
+            android:fontFamily="sans-serif-light"
+            android:text="240m0s"
+            android:textSize="10.2dp"
+            android:layout_below="@+id/totalDistance"
+            android:layout_alignLeft="@+id/totalDistance" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.15">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/groupImage"
+            android:background="@drawable/friends_blue"
+             />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/totalFiends"
+            android:textColor="#8e8e93"
+            android:fontFamily="sans-serif-light"
+            android:text="Alone"
+            android:textSize="10.2dp"
+            android:layout_below="@+id/groupImage"
+            android:layout_alignLeft="@+id/groupImage" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.10">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/expand"
+            android:background="@drawable/expand"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+             />
+    </RelativeLayout>
+
+</LinearLayout>

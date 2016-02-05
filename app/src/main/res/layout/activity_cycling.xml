@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--Activity LayoutStart -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff"
+        android:layout_marginTop="50dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/mapLayout"
+                android:layout_weight="0.55">
+
+                <fragment
+                    android:name="com.google.android.gms.maps.MapFragment"
+                    android:id="@+id/map"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:layout="@layout/layout_if_map_not_available" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/mapLayout"
+                android:layout_alignLeft="@+id/mapLayout"
+                android:layout_alignRight="@+id/mapLayout"
+                android:orientation="vertical"
+                android:layout_weight="0.45">
+
+                <RelativeLayout
+                    android:id="@+id/allContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp">
+
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:weightSum="3"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/distanceSpeedTime">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="horizontal"
+                            android:layout_weight="1">
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/disText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Distance"
+                                android:textSize="13.6dp"
+                                android:fontFamily="sans-serif-light"
+                                android:textColor="#8e8e93" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="kms"
+                                android:layout_below="@+id/distance"
+                                android:layout_centerHorizontal="true"
+                                android:textColor="#ff9600"
+                                android:fontFamily="sans-serif-light" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/disText"
+                                android:id="@+id/distance"
+                                android:text="00.00"
+                                android:textSize="18dp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif"
+                                android:textColor="#ff9600"
+                                android:layout_marginTop="5dp"
+                                android:layout_centerHorizontal="true" />
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/firstLine"
+                            android:layout_width="1dp"
+                            android:layout_height="55dp"
+                            android:background="#8e8e93"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginRight="2dp"
+                            />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_horizontal"
+                            android:layout_weight="1">
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/speedText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Speed"
+                                    android:textSize="13.6dp"
+                                    android:fontFamily="sans-serif-light"
+                                    android:textColor="#8e8e93"
+                                    android:layout_centerHorizontal="true" />
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/speedText"
+                                    android:id="@+id/currentAndAvgSpeedWrap"
+                                    android:layout_marginTop="5dp">
+
+                                    <TextView
+                                        android:id="@+id/currentSpeedText"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Current"
+                                        android:paddingTop="5dp"
+                                        android:textColor="#ff9600"
+                                        android:fontFamily="sans-serif-light" />
+
+                                    <TextView
+                                        android:id="@+id/avgSpeedText"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Avg"
+                                        android:layout_below="@+id/currentSpeedText"
+                                        android:paddingTop="5dp"
+                                        android:layout_marginLeft="10dp"
+                                        android:textColor="#ff9600"
+                                        android:fontFamily="sans-serif-light" />
+
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:id="@+id/speed"
+                                        android:textColor="#ff9600"
+                                        android:text="00.00"
+                                        android:textSize="18dp"
+                                        android:fontFamily="sans-serif"
+                                        android:textStyle="bold"
+                                        android:layout_toRightOf="@+id/currentSpeedText"
+                                        android:layout_marginLeft="10dp" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:id="@+id/avgSpeed"
+                                        android:textColor="#ff9600"
+                                        android:text="00.00"
+                                        android:textSize="18dp"
+                                        android:fontFamily="sans-serif"
+                                        android:textStyle="bold"
+                                        android:layout_alignLeft="@+id/speed"
+                                        android:layout_alignTop="@+id/avgSpeedText" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="km/hr"
+                                        android:layout_below="@+id/avgSpeed"
+                                        android:layout_centerHorizontal="true"
+                                        android:paddingLeft="3dp"
+                                        android:textColor="#ff9600"
+                                        android:fontFamily="sans-serif-light" />
+                                </RelativeLayout>
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+                        <View
+                            android:id="@+id/secondLine"
+                            android:layout_width="1dp"
+                            android:layout_height="55dp"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginLeft="2dp"
+                            android:background="#8e8e93" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="horizontal"
+                            android:layout_weight="1">
+
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/caloriesText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Calories"
+                                android:textSize="13.6dp"
+                                android:fontFamily="sans-serif-light"
+                                android:textColor="#8e8e93" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/calories"
+                                android:textColor="#ff9600"
+                                android:text="0"
+                                android:textSize="18dp"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:layout_below="@+id/caloriesText"
+                                android:layout_centerHorizontal="true"
+                                android:layout_marginTop="5dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="calories"
+                                android:layout_below="@+id/calories"
+                                android:layout_centerHorizontal="true"
+                                android:textColor="#ff9600"
+                                android:fontFamily="sans-serif-light" />
+                            </RelativeLayout>
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/stopButton"
+                        style="?android:textAppearanceSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textColor="#ffffff"
+                        android:layout_below="@+id/distanceSpeedTime"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/stop"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="STOP"
+                        android:fontFamily="sans-serif"
+                        android:id="@+id/stopText"
+                        android:textColor="#ff2851"
+                        android:textSize="12dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_alignTop="@+id/stopButton"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/time"
+                        android:textColor="#ff2851"
+                        android:text="00:00"
+                        android:textSize="20.4dp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/stopText"
+                        android:layout_marginTop="3dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="mm    ss"
+                        android:fontFamily="sans-serif"
+                        android:id="@+id/timeUnit"
+                        android:textColor="#ff2851"
+                        android:textSize="12dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignTop="@+id/time"
+                        android:paddingTop="23dp" />
+
+                    <ImageButton
+                        android:id="@+id/cross"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/cross"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="10dp" />
+                </RelativeLayout>
+
+
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- The navigation drawer and action bar -->
+    <include layout="@layout/activity_base" />
+
+
+</android.support.v4.widget.DrawerLayout>

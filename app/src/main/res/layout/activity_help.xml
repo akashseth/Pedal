@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textStyle="italic"
+        android:layout_marginTop="70dp"
+        android:text="Contact us : support@thepedalapp.com"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="10dp"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/titleHelp1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:onClick="toggleContents1"
+                android:text="@string/question1"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                />
+
+            <TextView
+                android:id="@+id/helpContent1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/titleHelp1"
+                android:text="@string/answer1"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp" />
+
+            <TextView
+                android:id="@+id/titleHelp2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:onClick="toggleContents2"
+                android:text="@string/question2"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_below="@+id/helpContent1"
+
+                />
+
+            <TextView
+                android:id="@+id/helpContent2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/titleHelp2"
+                android:text="@string/answer2"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp" />
+
+            <TextView
+                android:id="@+id/titleHelp3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:onClick="toggleContents3"
+                android:text="@string/question3"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_below="@+id/helpContent2"
+
+                />
+
+            <TextView
+                android:id="@+id/helpContent3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/titleHelp3"
+                android:text="@string/answer3"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp" />
+
+            <TextView
+                android:id="@+id/titleHelp4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:onClick="toggleContents4"
+                android:text="@string/question4"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_below="@+id/helpContent3"
+
+                />
+
+            <TextView
+                android:id="@+id/helpContent4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/titleHelp4"
+                android:text="@string/answer4"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp" />
+
+            <TextView
+                android:id="@+id/titleHelp5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:onClick="toggleContents5"
+                android:text="@string/question5"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_below="@+id/helpContent4"
+
+                />
+
+            <TextView
+                android:id="@+id/helpContent5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/titleHelp5"
+                android:text="@string/answer5"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp" />
+
+            <TextView
+                android:id="@+id/titleHelp6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:onClick="toggleContents6"
+                android:text="@string/question6"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_below="@+id/helpContent5"
+
+                />
+
+            <TextView
+                android:id="@+id/helpContent6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/titleHelp6"
+                android:text="@string/answer6"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <!-- The navigation drawer and action bar -->
+    <include layout="@layout/activity_base" />
+
+
+</android.support.v4.widget.DrawerLayout>

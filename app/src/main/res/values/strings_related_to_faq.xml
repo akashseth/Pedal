@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--String related to help activity-->
+    <string name="question1">How to start the cycling trip?</string>
+    <string name="answer1">You can tap on the cycling icon to start the trip.
+        When you start the trip you can see you distance travelled,time and speed. </string>
+    <string name="question2">Are my cycling trip details stored somewhere?</string>
+    <string name="answer2">Your cycling trip details are not stored if you are not logged in. Once you register and login your details
+        get stored in the our database and you can also see the details of your previous trips by clicking on history.</string>
+    <string name="question3">How do I abort a trip?</string>
+    <string name="answer3">You can cancel or abort a trip by clicking on the grey cancel button which is at the bottom in cycling page. If you abort/cancel
+    a trip the details of that trip will not be stored in the database even if you are logged in.</string>
+    <string name="question4">How do I stop a trip? </string>
+    <string name="answer4">You can stop a trip by clicking on the round stop button. The details of the stopped trips will be saved in the database if you are logged in</string>
+    <string name="question5">How do I register?
+    </string>
+    <string name="answer5">Goto the register page enter your name, valid mobile and password and click on register. You will then be redirected to the
+    OTP verification page.On that page enter the 4 digit number that will be sent to your mobile number and click on verify.
+        If you have correctly done all the above you will be registered and logged in.</string>
+    <string name="question6">What does the summary page show me?</string>
+    <string name="answer6">When you stop a cycling trip your are redirected to summary page on which you can see the total distance that you travelled during that trip
+    the time taken in that trip and the average speed in that trip.</string>
+</resources>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">"
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/my_tools"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#ff2851"
+            android:elevation="4dp"></android.support.v7.widget.Toolbar>
+    </RelativeLayout>
+
+
+    <!-- The navigation drawer -->
+
+    <RelativeLayout
+        android:id="@+id/left_drawer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice"
+        android:layout_gravity="start"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:background="#ffffff">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- profile pic and name of person -->
+            <RelativeLayout
+                android:id="@+id/profile_banner"
+                android:layout_width="wrap_content"
+                android:layout_weight="0.70"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/profilebanner" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/default_profile"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:id="@+id/profileImage" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/profileImage"
+                    android:layout_marginLeft="20dp"
+                    android:clickable="true"
+                    android:onClick="editProfile">
+
+                    <TextView
+                        android:id="@+id/profileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="17dp"
+                        android:fontFamily="sans-serif"
+                        android:textColor="#ffffff" />
+
+                    <TextView
+                        android:id="@+id/mobileNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="11dp"
+                        android:fontFamily="sans-serif"
+                        android:textColor="#ffffff"
+                        android:layout_below="@+id/profileName" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.30">
+
+                <ListView
+                    android:id="@+id/left_drawer_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:divider="@android:color/transparent"
+                    android:dividerHeight="0dp" />
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+
+</merge>

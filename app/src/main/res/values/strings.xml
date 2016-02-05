@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">Pedal</string>
+
+    <!--String related to Drawer-->
+    <string name="open">open</string>
+    <string name="close">close</string>
+
+    <!--String related to Title of Activity-->
+    <string name="titleActivity"><![CDATA[<font face="sans-serif" size="53px" color="#ffffff">Activity</font>]]></string>
+    <string name="cyclingActivity"><![CDATA[<font face="sans-serif" size="53px" color="#ffffff">Cycling</font>]]></string>
+    <string name="summaryActivity"><![CDATA[<font face="sans-serif" size="53px" color="#ffffff">Summary</font>]]></string>
+    <string name="optVerification"><![CDATA[<font face="sans-serif" size="53px" color="#ffffff">Verify Account</font>]]></string>
+    <string name="loginActivity"><![CDATA[<font face="sans-serif" size="53px" color="#ffffff">Login</font>]]></string>
+    <string name="registerActivity"><![CDATA[<font face="sans-serif" size="53px" color="#ffffff">Register</font>]]></string>
+    <string name="editProfile"><![CDATA[<font face="sans-serif" size="53px" color="#ffffff">Edit profile</font>]]></string>
+    <string name="helpActivity"><![CDATA[<font face="sans-serif" size="53px" color="#ffffff">Faqs</font>]]></string>
+    <string name="historyActiivty"><![CDATA[<font face="sans-serif" size="53px" color="#ffffff">History</font>]]></string>
+
+    <!--String related to Menu bar-->
+    <string name="action_settings">Settings</string>
+
+    <!--String related to login registration and verification-->
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="prompt_password">Password</string>
+    <string name="verify">Verify</string>
+    <string name="enterotp">Enter OTP</string>
+    <string name="register">register</string>
+    <string name="invalidMobileNo">Invalid mobile no</string>
+    <string name="wrongCredentials">Wrong credentials</string>
+    <string name="wrongCredentialMessage">Either mobile no. or password is incorrect</string>
+    <string name="ok">Ok</string>
+    <string name="loginWaitMessage">Please, wait..</string>
+    <string name="alertRegistrationNotComplete">Registration is not completed!</string>
+    <string name="alertRegistrationNotCompleteMessage">Your registration process is not completed. To read otp minimize the app instead pressing back button</string>
+    <string name="enterOtp">Enter otp</string>
+    <string name="numberAlreadyRegistered">Number already registered</string>
+    <string name="numberAlreadyRegisteredMessage">This number is already registered with us</string>
+
+    <!--String related to edit profile-->
+    <string name="save">Save</string>
+
+
+    <!--String related to Base Activity-->
+    <string name="History">History</string>
+    <string name="Logout">Logout</string>
+    <string name="Activity">Activity</string>
+    <string name="Login">Login</string>
+    <string name="Faqs">FAQs</string>
+    <string name="LogoutMessage">Do you really want to logout?</string>
+    <string name="Cancel">Cancel</string>
+
+    <!--String related to Cycling Activity-->
+    <string name="StopCycling">Stop Cycling</string>
+    <string name="StopCyclingMessage">Are you sure you want to Stop your cycling trip now?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="abortTrip">Abort Trip</string>
+    <string name="abortTripMessage">Are you sure? You want to abort this trip</string>
+    <string name="stop">Stop</string>
+    <string name="cancel">Cancel</string>
+    <string name="fetchingLocationMessage">Fetching, location..</string>
+
+    <!-- String related to History Activity-->
+    <string name="cycling">Cycling</string>
+    <string name="alone">Alone</string>
+    <string name="kms">" kms"</string>
+
+
+
+</resources>
