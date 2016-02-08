@@ -43,11 +43,11 @@ abstract class BaseActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
-       Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+       /*Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             public void uncaughtException(Thread paramThread, Throwable paramThrowable) {
                 Log.e("Error" + Thread.currentThread().getStackTrace()[2], paramThrowable.getLocalizedMessage());
             }
-        });
+        });*/
 
     }
 

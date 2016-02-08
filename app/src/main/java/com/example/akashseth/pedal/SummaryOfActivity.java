@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -53,29 +54,6 @@ public class SummaryOfActivity extends BaseActivity {
         getSupportActionBar().setTitle(Html.fromHtml(getString(R.string.summaryActivity)));
 
         setUserDataOfCycling();
-
-        Bundle bundleForPoints = getIntent().getExtras();
-        ArrayList<LatLng> points = (ArrayList<LatLng>) bundleForPoints.getSerializable("Points");
-
-        if (points.size() != 0) {
-
-            for (int i = 0; i < points.size() - 1; i++) {
-
-                Polyline line = googleMap.addPolyline(new PolylineOptions()
-                        .add(points.get(i), points.get(i + 1))
-                        .width(6)
-                        .color(Color.rgb(31, 144, 255)));
-            }
-            MarkerOptions startMark = new MarkerOptions().position(points.get(0));
-            MarkerOptions endMark = new MarkerOptions().position(points.get(points.size() - 1));
-
-            startMark.icon(BitmapDescriptorFactory.fromResource(R.drawable.location_green));
-            endMark.icon(BitmapDescriptorFactory.fromResource(R.drawable.location_red));
-
-            googleMap.addMarker(startMark);
-            googleMap.addMarker(endMark);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(points.get(points.size() - 1), 16));
-        }
 
         if (sessionManagement.isLoggedIn()) {
 
@@ -135,15 +113,22 @@ public class SummaryOfActivity extends BaseActivity {
 
         if (googleMap == null) {
             final MapFragment mapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.map));
-            googleMap = mapFragment.getMap();
-            UiSettings uiSettings = googleMap.getUiSettings();
-            uiSettings.setMapToolbarEnabled(false);
-            googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng latLng) {
-                    mapFragment.getView().setClickable(false);
-                }
-            });
+             mapFragment.getMapAsync(new OnMapReadyCallback() {
+                 @Override
+                 public void onMapReady(GoogleMap map) {
+                     googleMap = map;
+                     drawPathOnMap();
+                     UiSettings uiSettings = googleMap.getUiSettings();
+                     uiSettings.setMapToolbarEnabled(false);
+                     googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                         @Override
+                         public void onMapClick(LatLng latLng) {
+                             mapFragment.getView().setClickable(false);
+                         }
+                     });
+                 }
+             });
+
 
         }
     }
@@ -252,6 +237,32 @@ public class SummaryOfActivity extends BaseActivity {
         long rowId = databaseHandler.insertValuesInTableNotLoggedIn(new UserData(timeElapsed, distance, avgSpeed, lastActive, startTimeString, calories));
         return rowId;
 
+    }
+
+    protected void drawPathOnMap()
+    {
+        Bundle bundleForPoints = getIntent().getExtras();
+        ArrayList<LatLng> points = (ArrayList<LatLng>) bundleForPoints.getSerializable("Points");
+
+        if (points.size() != 0) {
+
+            for (int i = 0; i < points.size() - 1; i++) {
+
+                Polyline line = googleMap.addPolyline(new PolylineOptions()
+                        .add(points.get(i), points.get(i + 1))
+                        .width(6)
+                        .color(Color.rgb(31, 144, 255)));
+            }
+            MarkerOptions startMark = new MarkerOptions().position(points.get(0));
+            MarkerOptions endMark = new MarkerOptions().position(points.get(points.size() - 1));
+
+            startMark.icon(BitmapDescriptorFactory.fromResource(R.drawable.location_green));
+            endMark.icon(BitmapDescriptorFactory.fromResource(R.drawable.location_red));
+
+            googleMap.addMarker(startMark);
+            googleMap.addMarker(endMark);
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(points.get(points.size() - 1), 16));
+        }
     }
 
 }

@@ -64,7 +64,6 @@ public class StartActivity extends BaseActivity
                     .build();
         }
 
-
         startCyclingButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -73,7 +72,7 @@ public class StartActivity extends BaseActivity
                 prefetchLocation();
                 if (checkIfGpsIsEnabled()) {
                     Intent cyclingIntent = new Intent(getApplicationContext(), CyclingActivity.class).putExtra("LatLng", latLng);
-                    ;
+
                     startActivity(cyclingIntent);
                 }
             }
@@ -153,10 +152,7 @@ public class StartActivity extends BaseActivity
     }
 
     public void prefetchLocation() {
-        Log.d("out", "out");
         if (connected) {
-            Log.d("in", "in");
-
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                     mGoogleApiClient);
 

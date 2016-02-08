@@ -1,5 +1,7 @@
 package com.example.akashseth.pedal;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,28 +14,26 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.LatLng;
-
-import java.util.Calendar;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import java.util.Date;
 
-public class CyclingActivity extends BaseActivity {
+public class CyclingActivity extends BaseActivity  {
 
-    Date startTime, endTime;
+    Date endTime;
     ProgressDialog pDialog;
     long start, end;
     Thread threadForTimer;
     TextView speedText, distanceText, timeText, caloriesText, avgSpeedText;
+    TextView profileName,profileMobNO;
     long milliSecAfterInterrupt = 0, millis;
-    GoogleMap googleMap;
     ImageButton stopButton,skipButton;
     LocationUtility locationUtility;
-    String distance = "00.00", avgSpeed = "00.00", startTimeString = "", lastActive = "", timeElapsed = "00:00", calories = "0", userDataOfCycling[];
+    String distance = "0.00", avgSpeed = "0.00", startTimeString = "", lastActive = "", timeElapsed = "00:00", calories = "0", userDataOfCycling[];
     Thread threadForGps;
 
     @Override
@@ -46,8 +46,6 @@ public class CyclingActivity extends BaseActivity {
         setupDrawer();
         getSupportActionBar().setTitle(Html.fromHtml(getString(R.string.cyclingActivity)));
 
-        googleMap = ((MapFragment) getFragmentManager().findFragmentById(
-                R.id.map)).getMap();
 
         speedText = (TextView) findViewById(R.id.speed);
         distanceText = (TextView) findViewById(R.id.distance);
@@ -57,17 +55,40 @@ public class CyclingActivity extends BaseActivity {
         stopButton = (ImageButton) findViewById(R.id.stopButton);
         skipButton = (ImageButton) findViewById(R.id.cross);
 
-        locationUtility = new LocationUtility();
+        profileName = (TextView) findViewById(R.id.profileName);
+        profileMobNO = (TextView) findViewById(R.id.mobileNo);
 
+        if (sessionManagement.isLoggedIn()) {
+
+            String[] profileDetails;
+            profileDetails = sessionManagement.getProfileDetail();
+            profileName.setText(profileDetails[0]);
+            profileMobNO.setText("+" + profileDetails[1]);
+        }
+
+        SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(
+                R.id.map);
+
+        locationUtility = new LocationUtility();
         locationUtility.setTextView(speedText, distanceText, caloriesText, avgSpeedText);
 
-        threadForGps =new Thread()
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                locationUtility.initializeMap(googleMap);
+            }
+        });
+
+
+       threadForGps =new Thread()
         {
             @Override
             public void run() {
+
                  runOnUiThread(new Runnable() {
                      @Override
                      public void run() {
+
                          locationUtility.requestLocationUpdate(getApplicationContext());
                      }
                  });
@@ -76,11 +97,7 @@ public class CyclingActivity extends BaseActivity {
         };
         threadForGps.start();
 
-
-        LatLng latLng = getIntent().getParcelableExtra("LatLng");
-        locationUtility.initializeMap(googleMap,latLng);
-
-        new LocationControl().execute();
+         new LocationControl().execute();
 
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +116,6 @@ public class CyclingActivity extends BaseActivity {
         });
 
     }
-
 
     protected void setExercisedDetailsOfUser(String distance, String startTimeString, String lastActive, String avgSpeed, String calories) {
         this.distance = distance;
@@ -144,9 +160,8 @@ public class CyclingActivity extends BaseActivity {
             public void onClick(DialogInterface paramDialogInterface, int paramInt) {
 
                 milliSecAfterInterrupt=millis;
-                startTime=new Date();
-                start = startTime.getTime();
-
+                locationUtility.setStartTimeOfCycling();
+                start = locationUtility.getStartTimeOfCycling();
                 timer();
 
             }
@@ -172,9 +187,8 @@ public class CyclingActivity extends BaseActivity {
             public void onClick(DialogInterface paramDialogInterface, int paramInt) {
 
                 milliSecAfterInterrupt = millis;
-                startTime = new Date();
-                start = startTime.getTime();
-
+                locationUtility.setStartTimeOfCycling();
+                start = locationUtility.getStartTimeOfCycling();
                 timer();
 
             }
@@ -278,5 +292,6 @@ public class CyclingActivity extends BaseActivity {
         threadForGps.interrupt();
         threadForTimer.interrupt();
         locationUtility.stopLocationUpdates();
+        locationUtility.deRegisterSensor();
     }
 }

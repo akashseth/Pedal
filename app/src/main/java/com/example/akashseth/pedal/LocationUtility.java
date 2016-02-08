@@ -6,6 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -16,45 +20,46 @@ import android.support.annotation.Nullable;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.TextView;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
  * Created by Akash seth on 1/22/2016.
  */
-public class LocationUtility extends Service implements LocationListener {
+public class LocationUtility extends Service implements LocationListener ,SensorEventListener{
     LocationManager locationManager;
     GoogleMap googleMap;
     boolean isGPSEnabled = false;
-    boolean isNetworkEnabled = false;
     double speed, distance, distanceInKm, avgSpeed;
     float[] resultsToGetDistance = new float[3];
-    Location startLocation, endLocation;
+    Location startLocation, endLocation,location;
     double startLatitude, endLatitude;
     double startLongitude, endLongitude;
-    Date startTime, endTime;
-    long start, end, totalTime;
-    String starActivityTime = "", distanceString = "0.00", avgSpeedString = "00.00", caloriesString = "0";
-    Thread threadForTimer;
+    Date startTime;
+    long start, totalTime;
+    String starActivityTime = "", distanceString = "0.00", avgSpeedString = "0.00", caloriesString = "0";
     TextView speedText, distanceText, caloriesText, avgSpeedText;
     double totalCalories = 0, calories, weight;
     long totalCaloriesInLong;
     ArrayList<LatLng> points = new ArrayList<LatLng>();
-    Marker endMarkOnMap = null;
-    CameraPosition cameraPosition;
     boolean hasLocation=false;
+    int count =0;
+    LatLng startPoint,endPoint;
 
+    private SensorManager sensorMan;
+    private Sensor accelerometer;
+    private float[] mGravity;
+    private float mAccel;
+    private float mAccelCurrent;
+    private float mAccelLast;
+    boolean isMoving=false;
 
     public void setTextView(TextView speedText, TextView distanceText, TextView caloriesText, TextView avgSpeedText) {
         this.speedText = speedText;
@@ -64,8 +69,8 @@ public class LocationUtility extends Service implements LocationListener {
     }
 
     public void requestLocationUpdate(Context context) {
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         try {
             isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         } catch (Exception ex) {
@@ -76,10 +81,19 @@ public class LocationUtility extends Service implements LocationListener {
         PackageManager pm = context.getPackageManager();
         if (pm.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, "com.example.akashseth.pedal") == PackageManager.PERMISSION_GRANTED) {
 
-            locationManager.requestLocationUpdates(locationManager.getBestProvider(criteria, false), 250, 5, this);
+            locationManager.requestLocationUpdates(locationManager.getBestProvider(criteria, false), 250,3, this);
         } else {
             Log.d("permission", "required");
         }
+
+        sensorMan = (SensorManager) context.getSystemService(SENSOR_SERVICE);
+        accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorMan.registerListener(this, accelerometer,
+                SensorManager.SENSOR_DELAY_UI);
+        mAccel = 0.00f;
+        mAccelCurrent = SensorManager.GRAVITY_EARTH;
+        mAccelLast = SensorManager.GRAVITY_EARTH;
+
     }
 
     public boolean isGpsEnabled(Context context) {
@@ -92,26 +106,6 @@ public class LocationUtility extends Service implements LocationListener {
         return isGPSEnabled;
     }
 
-    public LatLng getLastKnowLocation(Context context) {
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 0, 0, this);
-
-        Location location = null;
-
-        PackageManager pm = context.getPackageManager();
-        if (pm.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, "com.example.akashseth.pedal") == PackageManager.PERMISSION_GRANTED) {
-
-            location = locationManager.getLastKnownLocation(locationManager.PASSIVE_PROVIDER);
-        } else {
-            Log.d("permission", "required");
-        }
-
-
-        return new LatLng(location.getLatitude(), location.getLongitude());
-
-    }
-
-
     public void setStartTimeOfCycling() {
         startTime = new Date();
         starActivityTime = DateFormat.format("yyyy-MM-dd kk:mm:ss", startTime).toString();
@@ -123,11 +117,16 @@ public class LocationUtility extends Service implements LocationListener {
         return this.start;
     }
 
-
     @Override
     public void onLocationChanged(Location location) {
+        this.location=location;
+        hasLocation = true;
+        if (count == 0) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(location.getLatitude(), location.getLongitude())), 16));
+        }
 
-            hasLocation=true;
+        if(totalTime>3000)
+        if (isMoving){
             if (location != null) {
                 if (startLocation == null) {
                     startLocation = new Location(location);
@@ -137,33 +136,30 @@ public class LocationUtility extends Service implements LocationListener {
                     startLatitude = round(startLatitude, 6);
                     startLongitude = round(startLongitude, 6);
                 }
-                    endLocation = new Location(location);
-                    endLatitude = endLocation.getLatitude();
-                    endLongitude = endLocation.getLongitude();
+                endLocation = new Location(location);
+                endLatitude = endLocation.getLatitude();
+                endLongitude = endLocation.getLongitude();
 
-                    endLatitude = round(endLatitude, 6);
-                    endLongitude = round(endLongitude, 6);
+                endLatitude = round(endLatitude, 6);
+                endLongitude = round(endLongitude, 6);
 
-                    location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, resultsToGetDistance);
+                location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, resultsToGetDistance);
 
-                    if (totalTime > 5000) {
-                        calculateDistance();
+                    calculateDistance();
 
-                        calculateSpeed(location);
+                    calculateSpeed(location);
 
-                        calculateCalories();
+                    calculateCalories();
 
-                        calculateAvgSpeed();
-                    }
+                    calculateAvgSpeed();
 
-                    // zoomMapToUserLocation();
+                setPointsInArray(new LatLng(startLatitude, startLongitude));
 
-                    setPointsInArray(new LatLng(startLatitude, startLongitude));
-
-                    startLatitude = endLatitude;
-                    startLongitude = endLongitude;
+                startLatitude = endLatitude;
+                startLongitude = endLongitude;
 
             }
+         }
 
     }
 
@@ -183,45 +179,37 @@ public class LocationUtility extends Service implements LocationListener {
         distanceInKm = distance / 1000;
         distanceInKm = round(distanceInKm, 2);
         distanceString = Double.toString(distanceInKm);
+        if(distance==0)
+            distanceText.setText("0.00");
+            else
         distanceText.setText(distanceString);
     }
 
     public void calculateSpeed(Location location) {
         speed = location.getSpeed() * 3.6;
         speed = round(speed, 2);
-        speedText.setText(Double.toString(speed));
+        if(speed==0)
+        speedText.setText("0.00");
+        else
+            speedText.setText(Double.toString(speed));
     }
 
     public void calculateAvgSpeed() {
         avgSpeed = (distance / (totalTime / 1000)) * 3.6;
         avgSpeed = round(avgSpeed, 2);
         avgSpeedString = Double.toString(avgSpeed);
-        avgSpeedText.setText(avgSpeedString);
+        if(avgSpeed==0)
+        avgSpeedText.setText("0.00");
+        else
+            avgSpeedText.setText(avgSpeedString);
     }
 
-    public void zoomMapToUserLocation() {
-        cameraPosition = new CameraPosition.Builder().target(
-                new LatLng(startLatitude, startLongitude)).zoom(16).build();
-
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
-
-    protected void initializeMap(GoogleMap map, LatLng latLng) {
+    protected void initializeMap(GoogleMap map) {
         if (googleMap == null) {
             googleMap = map;
             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             googleMap.setMyLocationEnabled(true);
-
-
-           /* if (latLng != null) {
-
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(
-                        latLng).zoom(16).build();
-
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }*/
-
-        }
+         }
 
     }
 
@@ -229,27 +217,32 @@ public class LocationUtility extends Service implements LocationListener {
         this.totalTime = totalTime;
     }
 
-
     protected void setPointsInArray(LatLng point) {
-
         points.add(point);
-        drawPathOnMap(points);
 
+            if (count == 0) {
+                startPoint = point;
+
+                MarkerOptions startMark = new MarkerOptions().position(startPoint);
+                startMark.icon(BitmapDescriptorFactory.fromResource(R.drawable.location_green));
+                googleMap.addMarker(startMark);
+
+                count++;
+            }
+            endPoint=point;
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(endPoint, 16));
+            drawPathOnMap();
+            startPoint = endPoint;
     }
 
-    protected void drawPathOnMap(ArrayList<LatLng> points) {
-        for (int i = 0; i < points.size() - 1; i++) {
+    protected void drawPathOnMap() {
 
-            Polyline line = googleMap.addPolyline(new PolylineOptions()
-                    .add(points.get(i), points.get(i + 1))
-                    .width(6)
-                    .color(Color.rgb(31, 144, 255)));
-        }
+           Polyline line = googleMap.addPolyline(new PolylineOptions()
+                   .add(startPoint, endPoint)
+                   .width(6)
+                   .color(Color.rgb(31, 144, 255)));
 
-        MarkerOptions startMark = new MarkerOptions().position(points.get(0));
-        startMark.icon(BitmapDescriptorFactory.fromResource(R.drawable.location_green));
-        googleMap.addMarker(startMark);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(points.get(points.size() - 1), 16));
+
     }
 
     protected void stopLocationUpdates()
@@ -291,5 +284,43 @@ public class LocationUtility extends Service implements LocationListener {
         return null;
     }
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+            mGravity = event.values.clone();
+            // Shake detection
+            float x = mGravity[0];
+            float y = mGravity[1];
+            float z = mGravity[2];
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = (float)Math.sqrt(x * x + y * y + z*z);
+            float delta = mAccelCurrent - mAccelLast;
+            mAccel = mAccel * 0.9f + delta;
+            mAccel=(float)round(mAccel,3);
+
+            if(Math.abs(mAccel) > 1){
+                //avgSpeedText.setText(Float.toString(Math.abs(mAccel)));
+                isMoving=true;
+                if(location!=null)
+                calculateSpeed(location);
+            }
+            else if(Math.abs(mAccel)<0.003 && Math.abs(mAccel)>0){
+                isMoving=false;
+                speedText.setText("0.00");
+               // avgSpeedText.setText(Float.toString(Math.abs(mAccel)));
+            }
+        }
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // required method
+    }
+
+    protected void deRegisterSensor()
+    {
+        sensorMan.unregisterListener(this);
+    }
 
 }
