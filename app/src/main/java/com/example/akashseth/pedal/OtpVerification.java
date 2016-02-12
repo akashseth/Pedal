@@ -96,7 +96,10 @@ public class OtpVerification extends BaseActivity {
         if (cancel) {
             focusView.requestFocus();
         } else {
-            new OtpVerify().execute();
+            if(!isNetworkAvailable(getApplicationContext()))
+                alertNetworkNotAvailable();
+            else
+                new OtpVerify().execute();
         }
     }
 
@@ -153,8 +156,7 @@ public class OtpVerification extends BaseActivity {
                     sessionManagement.setProfileMobile(getMobileNO);
 
                     // Transfer to startPage
-                    Intent i = new Intent(getApplicationContext(), EditProfile.class);
-
+                    Intent i = new Intent(getApplicationContext(), EditProfile.class).putExtra("newUser",true);
                     startActivity(i);
 
                     finish();
@@ -196,7 +198,7 @@ public class OtpVerification extends BaseActivity {
         builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                finish();
+
             }
         });
         builder.show();

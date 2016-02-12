@@ -1,12 +1,15 @@
 package com.example.akashseth.pedal;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +24,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 
 abstract class BaseActivity extends AppCompatActivity {
     ListView mDrawerList;
@@ -29,6 +36,7 @@ abstract class BaseActivity extends AppCompatActivity {
     ActionBarDrawerToggle mDrawerToggle;
     DrawerLayout mDrawerLayout;
     Toolbar myToolbar;
+    boolean isStartActivityInFront=false;
 
     SessionManagement sessionManagement;
 
@@ -43,11 +51,11 @@ abstract class BaseActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
-       /*Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+       Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             public void uncaughtException(Thread paramThread, Throwable paramThrowable) {
                 Log.e("Error" + Thread.currentThread().getStackTrace()[2], paramThrowable.getLocalizedMessage());
             }
-        });*/
+        });
 
     }
 
@@ -75,7 +83,6 @@ abstract class BaseActivity extends AppCompatActivity {
 
                 switch (position) {
                     case 0: {
-                        mDrawerLayout.closeDrawers();
                         Intent startActivityIntent = new Intent(getApplicationContext(), StartActivity.class);
                         startActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(startActivityIntent);
@@ -83,8 +90,9 @@ abstract class BaseActivity extends AppCompatActivity {
                     }
                     case 1: {
                         Intent historyIntent = new Intent(getApplicationContext(), History.class);
-                        historyIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                         startActivity(historyIntent);
+                        if(!isStartActivityInFront)
+                            finish();
                         return;
                     }
                     case 2: {
@@ -94,19 +102,20 @@ abstract class BaseActivity extends AppCompatActivity {
                             alertBeforeLogout();
                         } else {
                             Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                            loginIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                             startActivity(loginIntent);
+                            if(!isStartActivityInFront)
+                                finish();
                         }
                         return;
                     }
                     case 3: {
 
                         Intent faqIntent = new Intent(getApplicationContext(), Help.class);
-                        faqIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                         startActivity(faqIntent);
+                        if(!isStartActivityInFront)
+                            finish();
                         return;
                     }
-
 
                 }
             }
@@ -245,6 +254,56 @@ abstract class BaseActivity extends AppCompatActivity {
     public void editProfile(View view) {
         Intent editProfileIntent = new Intent(getApplicationContext(), EditProfile.class);
         startActivity(editProfileIntent);
+    }
+
+    protected boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null;
+    }
+
+    public boolean hasActiveInternetConnection(Context context) {
+        if (isNetworkAvailable(context)) {
+            try {
+                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://188.166.232.9").openConnection());
+                urlc.setRequestProperty("User-Agent", "Test");
+                urlc.setRequestProperty("Connection", "close");
+                urlc.setConnectTimeout(5000);
+                urlc.connect();
+                return (urlc.getResponseCode() == 200);
+            } catch (IOException e) {
+                Log.e("Error", "Error checking internet connection", e);
+            }
+        } else {
+            Log.d("no network", "No network available!");
+        }
+        return false;
+    }
+
+    public void alertNetworkNotAvailable() {
+        android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        dialog.setCancelable(false);
+        dialog.setTitle("Network Error");
+        dialog.setMessage("Make sure you are online and try again");
+        dialog.setPositiveButton("Wifi Settings", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+
+                Intent myIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                startActivity(myIntent);
+            }
+        });
+        dialog.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+
+
+            }
+        });
+        dialog.show();
+
     }
 
 

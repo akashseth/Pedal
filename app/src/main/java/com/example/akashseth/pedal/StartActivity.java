@@ -41,6 +41,7 @@ public class StartActivity extends BaseActivity
         commonDrawerConfigCall();
         addDrawerItems();
         setupDrawer();
+        isStartActivityInFront=true;
 
         getSupportActionBar().setTitle(Html.fromHtml(getString(R.string.titleActivity)));
 
@@ -188,20 +189,16 @@ public class StartActivity extends BaseActivity
         builder.show();
     }
 
-    protected void onStart() {
-        mGoogleApiClient.connect();
-        super.onStart();
-    }
 
     protected void onPause() {
-        mGoogleApiClient.disconnect();
         super.onPause();
+        isStartActivityInFront=false;
     }
 
     @Override
     protected void onResume() {
-        mGoogleApiClient.connect();
         super.onResume();
+        isStartActivityInFront=true;
     }
 
     private boolean isScreenSizeNormal()
@@ -212,6 +209,8 @@ public class StartActivity extends BaseActivity
             return true;
         return false;
     }
+
+
 
 
 }

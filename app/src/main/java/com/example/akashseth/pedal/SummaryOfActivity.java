@@ -265,4 +265,8 @@ public class SummaryOfActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        alertBeforeCancelSummary();
+    }
 }

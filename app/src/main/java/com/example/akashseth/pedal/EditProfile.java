@@ -1,13 +1,19 @@
 package com.example.akashseth.pedal;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +26,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,7 +121,10 @@ public class EditProfile extends AppCompatActivity {
                 if (checkIfFirstNameEmpty()) {
                     focusView.requestFocus();
                 } else {
-                    saveProfileToServer();
+                    if(!isNetworkAvailable(getApplicationContext()))
+                        alertNetworkNotAvailable();
+                    else
+                        saveProfileToServer();
 
                 }
 
@@ -170,12 +182,59 @@ public class EditProfile extends AppCompatActivity {
 
         protected void onPostExecute(String file_url) {
             progressDialog.dismiss();
-            Intent startActivityIntent= new Intent(getApplicationContext(),StartActivity.class);
-            startActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(startActivityIntent);
+            if(checkIfNewUser())
+            {
+                Intent newIntent=new Intent(getApplicationContext(),History.class);
+                startActivity(newIntent);
+                finish();
+            }
+            else {
+                Intent startActivityIntent = new Intent(getApplicationContext(), StartActivity.class);
+                startActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(startActivityIntent);
+            }
+
 
         }
 
+
+    }
+
+    protected boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null;
+    }
+
+    public void alertNetworkNotAvailable() {
+        android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        dialog.setCancelable(false);
+        dialog.setTitle("Network Error");
+        dialog.setMessage("Make sure you are online and try again");
+        dialog.setPositiveButton("Wifi Settings", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+
+                Intent myIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                startActivity(myIntent);
+            }
+        });
+        dialog.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+
+
+            }
+        });
+        dialog.show();
+
+    }
+
+    protected boolean checkIfNewUser()
+    {
+           return getIntent().getBooleanExtra("newUser",false);
 
     }
 }

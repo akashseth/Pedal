@@ -109,6 +109,9 @@ public class LoginActivity extends BaseActivity {
         if (cancel) {
             focusView.requestFocus();
         } else {
+            if(!isNetworkAvailable(getApplicationContext()))
+                alertNetworkNotAvailable();
+            else
             new Login().execute();
         }
     }

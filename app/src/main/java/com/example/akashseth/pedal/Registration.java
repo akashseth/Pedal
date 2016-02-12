@@ -129,7 +129,11 @@ public class Registration extends BaseActivity {
         if (cancel) {
             focusView.requestFocus();
         } else {
-            new NewAccount().execute();
+
+                if(!isNetworkAvailable(getApplicationContext()))
+                    alertNetworkNotAvailable();
+                else
+                    new NewAccount().execute();
         }
     }
 
@@ -176,8 +180,8 @@ public class Registration extends BaseActivity {
                         // Transfer to otp verification
                         Intent intent = new Intent(getApplicationContext(), OtpVerification.class);
                         intent.putExtra("mobileNo", mobileNo);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
+                        finish();
 
                     }
                 }

@@ -1,10 +1,13 @@
 package com.example.akashseth.pedal;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -62,16 +65,23 @@ public class History extends BaseActivity {
 
         if (sessionManagement.isLoggedIn()) {
 
-            if (!databaseHandler.isAllDbSyncedOfNotLoggedUser()) {
-                databaseHandler.fetchNotSyncedDataFromNotLoggedInTableAndCopyDataToLoggedInTable(sessionManagement.getUserId());
-            }
-
-            new syncToSever().execute();
-
             String[] profileDetails;
             profileDetails = sessionManagement.getProfileDetail();
             profileName.setText(profileDetails[0]);
             profileMobNO.setText("+" + profileDetails[1]);
+
+            if (!databaseHandler.isAllDbSyncedOfNotLoggedUser()) {
+                databaseHandler.fetchNotSyncedDataFromNotLoggedInTableAndCopyDataToLoggedInTable(sessionManagement.getUserId());
+            }
+
+                if(!isNetworkAvailable(getApplicationContext())) {
+                    getUserCyclingDataWhenNotLoggedInFromLocalDb();
+                    alertNetworkNotAvailable();
+                }
+                else
+                    new syncToSever().execute();
+
+
         } else {
             getUserCyclingDataWhenNotLoggedInFromLocalDb();
         }
@@ -181,31 +191,6 @@ public class History extends BaseActivity {
 
     }
 
-
-    private boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null;
-    }
-
-    public boolean hasActiveInternetConnection(Context context) {
-        if (isNetworkAvailable(context)) {
-            try {
-                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://188.166.232.9").openConnection());
-                urlc.setRequestProperty("User-Agent", "Test");
-                urlc.setRequestProperty("Connection", "close");
-                urlc.setConnectTimeout(10000);
-                urlc.connect();
-                return (urlc.getResponseCode() == 200);
-            } catch (IOException e) {
-                Log.e("Error", "Error checking internet connection", e);
-            }
-        } else {
-            Log.d("no network", "No network available!");
-        }
-        return false;
-    }
 
     class syncToSever extends AsyncTask<String, String, String> {
         @Override
@@ -328,4 +313,29 @@ public class History extends BaseActivity {
     public void comingSoon(View view) {
         Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
     }
+
+    public void alertNetworkNotAvailable() {
+        android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        dialog.setCancelable(false);
+        dialog.setTitle("Network Error");
+        dialog.setMessage("To save your data to online server, make sure you are connected to internet");
+        dialog.setPositiveButton("Wifi Settings", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+
+                Intent myIntent = new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS);
+                startActivity(myIntent);
+            }
+        });
+        dialog.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+
+            }
+        });
+        dialog.show();
+
+    }
+
 }

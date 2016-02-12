@@ -1,25 +1,20 @@
 package com.example.akashseth.pedal;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.MapFragment;
 import java.util.Date;
 
 public class CyclingActivity extends BaseActivity  {
@@ -30,11 +25,13 @@ public class CyclingActivity extends BaseActivity  {
     Thread threadForTimer;
     TextView speedText, distanceText, timeText, caloriesText, avgSpeedText;
     TextView profileName,profileMobNO;
-    long milliSecAfterInterrupt = 0, millis;
+    long milliSecAfterInterrupt = 0, millis=0;
     ImageButton stopButton,skipButton;
     LocationUtility locationUtility;
     String distance = "0.00", avgSpeed = "0.00", startTimeString = "", lastActive = "", timeElapsed = "00:00", calories = "0", userDataOfCycling[];
     Thread threadForGps;
+    GoogleMap googleMap;
+    boolean isClickedWifiSettings=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,21 +63,15 @@ public class CyclingActivity extends BaseActivity  {
             profileMobNO.setText("+" + profileDetails[1]);
         }
 
-        SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(
+        MapFragment mapFragment=(MapFragment) getFragmentManager().findFragmentById(
                 R.id.map);
+        googleMap=mapFragment.getMap();
 
         locationUtility = new LocationUtility();
         locationUtility.setTextView(speedText, distanceText, caloriesText, avgSpeedText);
+        locationUtility.initializeMap(googleMap);
 
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                locationUtility.initializeMap(googleMap);
-            }
-        });
-
-
-       threadForGps =new Thread()
+        threadForGps =new Thread()
         {
             @Override
             public void run() {
@@ -97,11 +88,15 @@ public class CyclingActivity extends BaseActivity  {
         };
         threadForGps.start();
 
-         new LocationControl().execute();
+        if(isNetworkAvailable(getApplicationContext()))
+            new LocationControl().execute();
+        else
+            alertIfNetworkNotAvailable();
 
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(threadForTimer!=null)
                 threadForTimer.interrupt();
                 alertBeforeStop();
             }
@@ -110,6 +105,7 @@ public class CyclingActivity extends BaseActivity  {
         skipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(threadForTimer!=null)
                 threadForTimer.interrupt();
                 alertBeforeCancelActivity();
             }
@@ -150,6 +146,8 @@ public class CyclingActivity extends BaseActivity  {
                 Intent intentForSummary = new Intent(getApplicationContext(), SummaryOfActivity.class).putExtras(bundleForPoints);
                 intentForSummary.putExtra("userDataOfCycling", userDataOfCycling);
                 startActivity(intentForSummary);
+
+                leaveResources();
                 finish();
             }
         });
@@ -178,6 +176,7 @@ public class CyclingActivity extends BaseActivity  {
             @Override
             public void onClick(DialogInterface paramDialogInterface, int paramInt) {
 
+                leaveResources();
                 finish();
             }
         });
@@ -249,7 +248,8 @@ public class CyclingActivity extends BaseActivity  {
     @Override
     public void onBackPressed() {
 
-        threadForTimer.interrupt();
+       if(threadForTimer!=null)
+           threadForTimer.interrupt();
         alertBeforeCancelActivity();
     }
 
@@ -267,30 +267,103 @@ public class CyclingActivity extends BaseActivity  {
         protected Void doInBackground(Context... params)
         {
 
-            while (!locationUtility.hasLocation) {
+            Date date=new Date();
+            while (!locationUtility.hasLocation && ((new Date()).getTime()- date.getTime())<45000 ) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            };
+            }
             return null;
         }
 
         protected void onPostExecute(final Void unused)
         {
             pDialog.dismiss();
-            locationUtility.setStartTimeOfCycling();
-            start = locationUtility.getStartTimeOfCycling();
-            timer();
+            if(locationUtility.hasLocation==false)
+            {
+                alertUnableToFetchLocation();
+            }
+            else
+            {
+                locationUtility.registerAccelerometerSensor(getApplicationContext());
+                if(millis==0) {
+                    locationUtility.setStartTimeOfCycling();
+                    start = locationUtility.getStartTimeOfCycling();
+                    timer();
+                }
+
+            }
         }
+    }
+
+
+    public void alertUnableToFetchLocation() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        dialog.setCancelable(false);
+        dialog.setTitle("Location Error");
+        dialog.setMessage("Unable to fetch location. Please try again");
+        dialog.setPositiveButton("Try again", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+
+                new LocationControl().execute();
+            }
+        });
+        dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+
+                finish();
+            }
+        });
+        dialog.show();
+
+    }
+
+    public void alertIfNetworkNotAvailable() {
+        android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        dialog.setCancelable(false);
+        dialog.setTitle("Network Error");
+        dialog.setMessage("To view map properly, make sure you are connected to internet");
+
+        dialog.setPositiveButton("Wifi settings", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                isClickedWifiSettings=true;
+                Intent wifiSettings=new Intent(Settings.ACTION_WIFI_SETTINGS);
+                startActivity(wifiSettings);
+            }
+        });
+
+        dialog.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                new LocationControl().execute();
+            }
+        });
+        dialog.show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(isClickedWifiSettings)
+            new LocationControl().execute();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        leaveResources();
+    }
+
+    protected void leaveResources()
+    {
         threadForGps.interrupt();
-        threadForTimer.interrupt();
         locationUtility.stopLocationUpdates();
         locationUtility.deRegisterSensor();
     }

@@ -81,18 +81,17 @@ public class LocationUtility extends Service implements LocationListener ,Sensor
         PackageManager pm = context.getPackageManager();
         if (pm.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, "com.example.akashseth.pedal") == PackageManager.PERMISSION_GRANTED) {
 
-            locationManager.requestLocationUpdates(locationManager.getBestProvider(criteria, false), 250,3, this);
+            if((location = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER))!=null) {
+                hasLocation = true;
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(location.getLatitude(), location.getLongitude())), 16));
+            }
+            locationManager.requestLocationUpdates(locationManager.getBestProvider(criteria, true), 250,3, this);
+
         } else {
             Log.d("permission", "required");
         }
 
-        sensorMan = (SensorManager) context.getSystemService(SENSOR_SERVICE);
-        accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorMan.registerListener(this, accelerometer,
-                SensorManager.SENSOR_DELAY_UI);
-        mAccel = 0.00f;
-        mAccelCurrent = SensorManager.GRAVITY_EARTH;
-        mAccelLast = SensorManager.GRAVITY_EARTH;
+
 
     }
 
@@ -120,6 +119,7 @@ public class LocationUtility extends Service implements LocationListener ,Sensor
     @Override
     public void onLocationChanged(Location location) {
         this.location=location;
+        Log.d("changed","changed");
         hasLocation = true;
         if (count == 0) {
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(location.getLatitude(), location.getLongitude())), 16));
@@ -179,7 +179,7 @@ public class LocationUtility extends Service implements LocationListener ,Sensor
         distanceInKm = distance / 1000;
         distanceInKm = round(distanceInKm, 2);
         distanceString = Double.toString(distanceInKm);
-        if(distance==0)
+        if(distanceInKm==0)
             distanceText.setText("0.00");
             else
         distanceText.setText(distanceString);
@@ -241,8 +241,6 @@ public class LocationUtility extends Service implements LocationListener ,Sensor
                    .add(startPoint, endPoint)
                    .width(6)
                    .color(Color.rgb(31, 144, 255)));
-
-
     }
 
     protected void stopLocationUpdates()
@@ -320,7 +318,19 @@ public class LocationUtility extends Service implements LocationListener ,Sensor
 
     protected void deRegisterSensor()
     {
+        if(sensorMan!=null)
         sensorMan.unregisterListener(this);
+    }
+
+    protected void registerAccelerometerSensor(Context context)
+    {
+        sensorMan = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorMan.registerListener(this, accelerometer,
+                SensorManager.SENSOR_DELAY_UI);
+        mAccel = 0.00f;
+        mAccelCurrent = SensorManager.GRAVITY_EARTH;
+        mAccelLast = SensorManager.GRAVITY_EARTH;
     }
 
 }
