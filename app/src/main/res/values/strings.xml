@@ -61,7 +61,7 @@
     <string name="abortTripMessage">Are you sure? You want to abort this trip</string>
     <string name="stop">Stop</string>
     <string name="cancel">Cancel</string>
-    <string name="fetchingLocationMessage">Fetching, location..</string>
+    <string name="fetchingLocationMessage">Fetching, current location..</string>
 
     <!-- String related to History Activity-->
     <string name="cycling">Cycling</string>

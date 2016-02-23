@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.akashseth.pedal">
+    package="com.pedal.app.pedal">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".StartActivity"
+            android:name="com.pedal.app.pedal.StartActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,33 +24,33 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".History"
+            android:name="com.pedal.app.pedal.History"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.pedal.app.pedal.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".CyclingActivity"
+            android:name="com.pedal.app.pedal.CyclingActivity"
             android:screenOrientation="portrait" />/>
-        <activity android:name=".Help" />
+        <activity android:name="com.pedal.app.pedal.Help" />
         <activity
-            android:name=".OtpVerification"
+            android:name="com.pedal.app.pedal.OtpVerification"
             android:screenOrientation="portrait" />
-        <activity android:name=".Registration" />
+        <activity android:name="com.pedal.app.pedal.Registration" />
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyArfpGPzAvkcfHJDERf6Hn_tviVK459LYI" />
 
         <activity
-            android:name=".SummaryOfActivity"
+            android:name="com.pedal.app.pedal.SummaryOfActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".EditProfile"
+            android:name="com.pedal.app.pedal.EditProfile"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".StartActivity" />
+                android:value="com.pedal.app.pedal.StartActivity" />
         </activity>
 
     </application>

@@ -1,4 +1,4 @@
-package com.example.akashseth.pedal;
+package com.pedal.app.pedal;
 
 import org.junit.Test;
 
