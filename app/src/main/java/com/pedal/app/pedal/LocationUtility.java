@@ -87,7 +87,7 @@ public class LocationUtility extends Service
         criteria.setSpeedRequired(true);
         isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         PackageManager pm = context.getPackageManager();
-        if (pm.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, "com.example.akashseth.pedal") == PackageManager.PERMISSION_GRANTED) {
+        if (pm.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, "com.pedal.app.pedal") == PackageManager.PERMISSION_GRANTED) {
 
             locationManager.requestLocationUpdates(locationManager.getBestProvider(criteria, true), 250,3, this);
 
