@@ -135,10 +135,10 @@ public class History extends BaseActivity {
             String startTimeString, endTimeString, timeElapsedString, distanceString, startDateString;
             int j = 0;
 
-            SimpleDateFormat parseDate = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+            SimpleDateFormat parseDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat parseTime = new SimpleDateFormat("mmm:ss");
 
-            SimpleDateFormat displayTime = new SimpleDateFormat("kk:mm a");
+            SimpleDateFormat displayTime = new SimpleDateFormat("hh:mm a");
             SimpleDateFormat displayDate = new SimpleDateFormat("dd MMM'' yyyy");
 
             Calendar calendarDate = Calendar.getInstance();

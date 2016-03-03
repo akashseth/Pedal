@@ -89,10 +89,10 @@ public class SummaryOfActivity extends BaseActivity {
     }
 
     public void setTimeOnSummaryPage() {
-        SimpleDateFormat parseDate = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+        SimpleDateFormat parseDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat parseTime = new SimpleDateFormat("mmm:ss");
 
-        SimpleDateFormat displayTime = new SimpleDateFormat("k:mm a");
+        SimpleDateFormat displayTime = new SimpleDateFormat("h:mm a");
         SimpleDateFormat displayDate = new SimpleDateFormat("MMMM dd,yyyy");
         try {
             Date startDate = parseDate.parse(startTimeString);
